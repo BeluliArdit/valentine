@@ -509,27 +509,44 @@
     music.volume = 1.0;
     music.play().catch(function(){});
 
-    // unmute on first real interaction
-    var activationEvents = ['click', 'mousedown', 'pointerdown', 'pointerup',
-                            'touchstart', 'touchend', 'keydown', 'mousemove',
-                            'scroll', 'wheel'];
+    // fade volume in quickly so it's not jarring
+    function fadeIn() {
+      music.volume = 0;
+      music.muted = false;
+      var vol = 0;
+      var fade = setInterval(function() {
+        vol += 0.05;
+        if (vol >= 1) { vol = 1; clearInterval(fade); }
+        music.volume = vol;
+      }, 30);
+      if (music.paused) music.play().catch(function(){});
+      isPlaying = true;
+      updatePlayBtn();
+    }
+
+    // unmute on first real interaction — listen on EVERYTHING
+    var activationEvents = ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup',
+                            'pointermove', 'touchstart', 'touchend', 'keydown',
+                            'mousemove', 'scroll', 'wheel', 'focus'];
 
     function unmuteMusic() {
       if (unmuted) return;
       unmuted = true;
-      music.muted = false;
-      if (music.paused) {
-        music.play().catch(function(){});
-      }
-      isPlaying = true;
-      updatePlayBtn();
+      fadeIn();
       activationEvents.forEach(function(evt) {
         document.removeEventListener(evt, unmuteMusic, true);
+        window.removeEventListener(evt, unmuteMusic, true);
       });
     }
 
     activationEvents.forEach(function(evt) {
       document.addEventListener(evt, unmuteMusic, true);
+      window.addEventListener(evt, unmuteMusic, true);
+    });
+
+    // also catch page focus/visibility
+    document.addEventListener('visibilitychange', function() {
+      if (!unmuted && document.visibilityState === 'visible') unmuteMusic();
     });
 
     // ---- PLAYER CONTROLS ----
