@@ -500,46 +500,37 @@
     container.appendChild(closingSlide);
 
     // ---- MUSIC ----
-    var musicStarted = false;
-    var musicPending = false;
     var music = document.getElementById('bgMusic');
-    music.volume = 1.0;
     var isPlaying = false;
+    var unmuted = false;
 
+    // start muted so autoplay works instantly (browsers allow muted autoplay)
+    music.muted = true;
+    music.volume = 1.0;
+    music.play().catch(function(){});
+
+    // unmute on first real interaction
     var activationEvents = ['click', 'mousedown', 'pointerdown', 'pointerup',
                             'touchstart', 'touchend', 'keydown', 'mousemove',
                             'scroll', 'wheel'];
 
-    function playMusic() {
-      if (musicStarted || musicPending) return;
-      musicPending = true;
-      var p = music.play();
-      if (p && p.then) {
-        p.then(function() {
-          musicStarted = true;
-          musicPending = false;
-          isPlaying = true;
-          updatePlayBtn();
-          activationEvents.forEach(function(evt) {
-            document.removeEventListener(evt, playMusic, true);
-          });
-        }).catch(function() {
-          musicPending = false;
-        });
-      } else {
-        musicStarted = true;
-        musicPending = false;
-        isPlaying = true;
-        updatePlayBtn();
+    function unmuteMusic() {
+      if (unmuted) return;
+      unmuted = true;
+      music.muted = false;
+      if (music.paused) {
+        music.play().catch(function(){});
       }
+      isPlaying = true;
+      updatePlayBtn();
+      activationEvents.forEach(function(evt) {
+        document.removeEventListener(evt, unmuteMusic, true);
+      });
     }
 
     activationEvents.forEach(function(evt) {
-      document.addEventListener(evt, playMusic, true);
+      document.addEventListener(evt, unmuteMusic, true);
     });
-
-    // aggressive: try playing immediately
-    try { music.play().catch(function(){}); } catch(e) {}
 
     // ---- PLAYER CONTROLS ----
     var playBtn = document.getElementById('playBtn');
