@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For Soraya</title>
+  <meta name="description" content="44 Reasons I Love You">
+  <meta name="theme-color" content="#fdf6f0">
+  <meta property="og:title" content="For Soraya">
+  <meta property="og:description" content="44 Reasons I Love You">
+  <meta property="og:image" content="swans_kissing.png">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♥</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Great+Vibes&family=Lora:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      scroll-snap-type: y mandatory;
+      scrollbar-width: none;
+    }
+    html::-webkit-scrollbar {
+      display: none;
+    }
+    body {
+      background-color: #fdf6f0;
+      color: #5a3e36;
+      font-family: 'Lora', serif;
+    }
+
+    /* faded background photo */
+    .bg-photo {
+      position: fixed;
+      inset: 0;
+      background: url('swans_kissing.png') center center / cover no-repeat;
+      opacity: 0.055;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* page border */
+    .page-border {
+      position: fixed;
+      inset: 8px;
+      border: 1px solid rgba(196,144,138,0.2);
+      border-radius: 12px;
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    /* petals */
+    .petal {
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+      animation: floatDown linear forwards;
+    }
+    @keyframes floatDown {
+      0%   { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+      10%  { opacity: .28; }
+      90%  { opacity: .2; }
+      100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* swan scene */
+    .swan-wrap {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      opacity: 0;
+      animation: fadeInSwan 2.5s ease forwards 1s;
+    }
+    @keyframes fadeInSwan {
+      to { opacity: 1; }
+    }
+    .swan-scene {
+      width: 240px;
+      height: auto;
+      cursor: pointer;
+      pointer-events: auto;
+      animation: swanBreathe 4s ease-in-out infinite;
+      transition: transform 0.4s ease;
+    }
+    .swan-scene:hover {
+      transform: scale(1.04);
+    }
+    .swan-scene.kissing {
+      animation: swanKiss 0.8s ease;
+    }
+    @keyframes swanBreathe {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50%      { transform: translateY(-4px) scale(1.015); }
+    }
+    @keyframes swanKiss {
+      0%   { transform: scale(1); }
+      30%  { transform: scale(1.08); }
+      50%  { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    .swan-label {
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.3rem;
+      color: #c4908a;
+      text-shadow: 0 1px 8px rgba(196,144,138,0.2);
+      letter-spacing: 1px;
+    }
+    .kiss-heart {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.4rem;
+      opacity: 0;
+      pointer-events: none;
+      animation: floatHeart 1.2s ease forwards;
+    }
+    @keyframes floatHeart {
+      0%   { opacity: 0; transform: translateX(-50%) translateY(0) scale(0.5); }
+      30%  { opacity: 1; transform: translateX(-50%) translateY(-20px) scale(1); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-60px) scale(0.8); }
+    }
+
+    @media (max-width: 600px) {
+      .swan-scene { width: 180px; }
+      .swan-label { font-size: 1.1rem; }
+      .page-border { inset: 5px; }
+    }
+
+    /* slides */
+    .slide {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem 2rem 140px;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* hero */
+    .day-label {
+      font-size: .8rem;
+      font-weight: 500;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: #c4908a;
+      margin-bottom: .25rem;
+      text-shadow: 0 1px 6px rgba(196,144,138,0.15);
+    }
+    .angel-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 1.05rem;
+      color: #ddb8b0;
+      letter-spacing: 6px;
+      margin-bottom: 1.5rem;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(2.6rem, 7vw, 5.2rem);
+      line-height: 1.15;
+      color: #6b3a3a;
+      margin-bottom: 1.2rem;
+      text-shadow: 0 2px 16px rgba(107,58,58,0.08);
+    }
+    .hero-subtitle {
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(.95rem, 2vw, 1.15rem);
+      color: #b07a74;
+      max-width: 420px;
+      line-height: 1.7;
+      margin-bottom: .6rem;
+      text-shadow: 0 1px 8px rgba(176,122,116,0.1);
+    }
+    .unlock-note {
+      font-size: .68rem;
+      font-weight: 400;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #cba8a2;
+      margin-bottom: 1.8rem;
+    }
+    .countdowns {
+      display: flex;
+      flex-direction: column;
+      gap: .65rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(196,144,138,0.25);
+      border-radius: 10px;
+      padding: 1rem 1.6rem;
+      background: rgba(253,246,240,0.5);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    .countdown-item {
+      font-size: .78rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #c4908a;
+    }
+    .countdown-time {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      font-weight: 500;
+      color: #9a6460;
+      letter-spacing: 1px;
+    }
+    .scroll-hint {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .5rem;
+      color: #c4908a;
+      font-size: .72rem;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      animation: pulseHint 2.5s ease-in-out infinite;
+    }
+    .scroll-hint svg {
+      width: 20px;
+      height: 20px;
+      stroke: #c4908a;
+      animation: bounceArrow 2.5s ease-in-out infinite;
+    }
+    @keyframes pulseHint {
+      0%, 100% { opacity: 0.6; }
+      50%      { opacity: 1; }
+    }
+    @keyframes bounceArrow {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(7px); }
+    }
+
+    /* welcome message */
+    .welcome-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      font-style: italic;
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: #7a5550;
+      max-width: 460px;
+      line-height: 1.9;
+      text-shadow: 0 1px 10px rgba(122,85,80,0.08);
+    }
+    .welcome-name {
+      font-family: 'Great Vibes', cursive;
+      font-style: normal;
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      color: #b07a74;
+      display: block;
+      margin-bottom: 1.2rem;
+      text-shadow: 0 2px 12px rgba(176,122,116,0.15);
+    }
+
+    /* reason */
+    .reason-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(3rem, 8vw, 4.5rem);
+      color: #ddb8b0;
+      margin-bottom: .4rem;
+      text-shadow: 0 2px 12px rgba(221,184,176,0.2);
+    }
+    .reason-text {
+      font-family: 'Lora', serif;
+      font-size: clamp(1.05rem, 2.6vw, 1.25rem);
+      font-weight: 400;
+      line-height: 1.8;
+      color: #6b4a44;
+      max-width: 500px;
+      text-shadow: 0 1px 8px rgba(107,74,68,0.06);
+    }
+
+    /* closing */
+    .closing-heart {
+      font-size: 1.4rem;
+      color: #d4908a;
+      margin-bottom: 1.6rem;
+    }
+    .closing-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(3rem, 8vw, 4.5rem);
+      color: #ddb8b0;
+      margin-bottom: .4rem;
+      text-shadow: 0 2px 12px rgba(221,184,176,0.2);
+    }
+    .closing-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      font-style: italic;
+      font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+      color: #6b3a3a;
+      max-width: 480px;
+      line-height: 1.55;
+      text-shadow: 0 1px 10px rgba(107,58,58,0.08);
+    }
+
+    /* music player */
+    .music-player {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      background: rgba(28,21,24,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      padding: 6px 12px 6px 8px;
+      z-index: 100;
+      border-radius: 20px;
+      gap: 8px;
+      user-select: none;
+    }
+    .player-btn {
+      background: none;
+      border: none;
+      color: #c4908a;
+      cursor: pointer;
+      padding: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .player-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+    .player-title {
+      color: rgba(240,230,226,0.8);
+      font-size: 0.7rem;
+      font-weight: 400;
+      font-family: 'Lora', serif;
+      letter-spacing: 0.5px;
+    }
+
+    /* grain */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: .028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 180px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- faded background -->
+  <div class="bg-photo"></div>
+
+  <!-- page border -->
+  <div class="page-border"></div>
+
+  <!-- background music -->
+  <audio id="bgMusic" preload="auto" loop autoplay>
+    <source src="song.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- swans + label -->
+  <div class="swan-wrap">
+    <img class="swan-scene" id="swanImg" src="swans_kissing.png" alt="">
+    <span class="swan-label">For Soraya</span>
+  </div>
+
+  <div id="slides"></div>
+
+  <!-- music player -->
+  <div class="music-player" id="musicPlayer">
+    <button class="player-btn" id="playBtn" aria-label="Play">
+      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+        <polygon points="6,3 20,12 6,21"/>
+      </svg>
+    </button>
+    <span class="player-title">lvr boy</span>
+  </div>
+
+  <script>
+    var reasons = [
+      "Loving you feels instinctive, like something my heart already knew.",
+      "I appreciate you in ways that happen effortlessly.",
+      "Every version of forever includes you.",
+      "Even the quietest things you say linger with me.",
+      "You make me feel genuinely safe.",
+      "With you, excitement feels steady, never overwhelming.",
+      "You understand me without needing explanations.",
+      "Being with you feels familiar in the most comforting way.",
+      "You bring peace to parts of me that were always restless.",
+      "You steady me when doubt creeps in.",
+      "My love for you doesn\u2019t waver.",
+      "My love for you isn\u2019t conditional.",
+      "My love for you isn\u2019t temporary.",
+      "You ground me when my mind is overloaded.",
+      "Time softens and slows when I\u2019m with you.",
+      "You show up when it actually matters.",
+      "You add depth to life.",
+      "You make me want to be better, not different.",
+      "With you, I feel capable.",
+      "With you, I feel confident in what\u2019s ahead.",
+      "I believe in what we can build together.",
+      "My focus is on you, consistently.",
+      "Choosing you feels natural.",
+      "I think about our future in ways that feel real, not imagined.",
+      "The life we speak of feels within a finger\u2019s reach.",
+      "We care about the same things at our core.",
+      "Our priorities align where it counts most.",
+      "What we\u2019ve already built feels intentional and meaningful.",
+      "I\u2019m excited to see how it continues to unfold.",
+      "We\u2019re learning what love looks like, together.",
+      "You understand how my mind works.",
+      "You understand why I am the way I am.",
+      "You make me laugh in ways no one else ever has.",
+      "Distance feels temporary because I know we\u2019re building toward forever.",
+      "You taught me that patience is just love in slow motion.",
+      "You share your world with me.",
+      "You let me into the parts of life that matter most.",
+      "You bring clarity where there was noise.",
+      "We align without forcing it.",
+      "We move in sync naturally.",
+      "With you, even longing feels like belonging.",
+      "What we have doesn\u2019t happen twice.",
+      "Silence with you still feels full.",
+      "As deep as this feels, I know we\u2019re only at the beginning."
+    ];
+
+    // ---- BUILD SLIDES ----
+    var container = document.getElementById('slides');
+
+    // hero
+    var hero = document.createElement('div');
+    hero.className = 'slide';
+    hero.innerHTML =
+      '<p class="day-label">Day 1</p>' +
+      '<p class="angel-number">444</p>' +
+      '<h1 class="hero-title">44 Reasons<br>I Love You</h1>' +
+      '<p class="hero-subtitle"><em>Because some things deserve to be said slowly.</em></p>' +
+      '<p class="unlock-note">New message unlocks every morning at 4:44 AM</p>' +
+      '<div class="countdowns">' +
+        '<div class="countdown-item">Next unlock in <span class="countdown-time" id="nextUnlock">--:--:--</span></div>' +
+        '<div class="countdown-item">Valentine\u2019s Day in <span class="countdown-time" id="vdayCountdown">-- days</span></div>' +
+      '</div>' +
+      '<div class="scroll-hint">' +
+        '<span>scroll</span>' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+          '<path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/>' +
+        '</svg>' +
+      '</div>';
+    container.appendChild(hero);
+
+    // welcome message
+    var welcome = document.createElement('div');
+    welcome.className = 'slide';
+    welcome.innerHTML =
+      '<p class="welcome-text">' +
+        '<span class="welcome-name">Soraya,</span>' +
+        'I wrote you in 444 parts. Every morning at 4:44, another piece of my heart reveals itself. ' +
+        'Fifteen days of truths about loving you, about what sets you apart, and about the life I want us to live. ' +
+        'This is my heart, measured in moments that led me to you.' +
+        '<br><br>So here\u2019s Day 1 \u2014 44 reasons I love you.' +
+      '</p>';
+    container.appendChild(welcome);
+
+    // reasons 1-43
+    for (var i = 0; i < reasons.length - 1; i++) {
+      var el = document.createElement('div');
+      el.className = 'slide';
+      el.innerHTML =
+        '<div class="reason-number">' + (i + 1) + '</div>' +
+        '<p class="reason-text">' + reasons[i] + '</p>';
+      container.appendChild(el);
+    }
+
+    // closing (44)
+    var closingSlide = document.createElement('div');
+    closingSlide.className = 'slide';
+    closingSlide.innerHTML =
+      '<div class="closing-heart">&#10084;</div>' +
+      '<div class="closing-number">44</div>' +
+      '<p class="closing-text">' + reasons[reasons.length - 1] + '</p>';
+    container.appendChild(closingSlide);
+
+    // ---- MUSIC ----
+    var musicStarted = false;
+    var musicPending = false;
+    var music = document.getElementById('bgMusic');
+    music.volume = 1.0;
+    var isPlaying = false;
+
+    var activationEvents = ['click', 'mousedown', 'pointerdown', 'pointerup',
+                            'touchstart', 'touchend', 'keydown', 'mousemove',
+                            'scroll', 'wheel'];
+
+    function playMusic() {
+      if (musicStarted || musicPending) return;
+      musicPending = true;
+      var p = music.play();
+      if (p && p.then) {
+        p.then(function() {
+          musicStarted = true;
+          musicPending = false;
+          isPlaying = true;
+          updatePlayBtn();
+          activationEvents.forEach(function(evt) {
+            document.removeEventListener(evt, playMusic, true);
+          });
+        }).catch(function() {
+          musicPending = false;
+        });
+      } else {
+        musicStarted = true;
+        musicPending = false;
+        isPlaying = true;
+        updatePlayBtn();
+      }
+    }
+
+    activationEvents.forEach(function(evt) {
+      document.addEventListener(evt, playMusic, true);
+    });
+
+    // aggressive: try playing immediately
+    try { music.play().catch(function(){}); } catch(e) {}
+
+    // ---- PLAYER CONTROLS ----
+    var playBtn = document.getElementById('playBtn');
+
+    function updatePlayBtn() {
+      if (isPlaying) {
+        playBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>';
+      } else {
+        playBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6,3 20,12 6,21"/></svg>';
+      }
+    }
+
+    playBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (!musicStarted) {
+        playMusic();
+        return;
+      }
+      if (isPlaying) {
+        music.pause();
+        isPlaying = false;
+      } else {
+        music.play();
+        isPlaying = true;
+      }
+      updatePlayBtn();
+    });
+
+    // ---- SWAN KISS ----
+    var swanImg = document.getElementById('swanImg');
+    swanImg.addEventListener('click', function() {
+      // trigger kiss animation
+      swanImg.classList.remove('kissing');
+      void swanImg.offsetWidth;
+      swanImg.classList.add('kissing');
+
+      // float a heart up
+      var heart = document.createElement('span');
+      heart.className = 'kiss-heart';
+      heart.textContent = '\u2764';
+      swanImg.parentElement.appendChild(heart);
+      setTimeout(function() { heart.remove(); }, 1200);
+    });
+
+    // ---- COUNTDOWNS ----
+    var nextUnlockEl = document.getElementById('nextUnlock');
+    var vdayEl = document.getElementById('vdayCountdown');
+
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+    function updateCountdowns() {
+      var now = new Date();
+
+      // next unlock: 4:44 AM tomorrow (or today if before 4:44)
+      var unlock = new Date(now);
+      unlock.setHours(4, 44, 0, 0);
+      if (unlock <= now) unlock.setDate(unlock.getDate() + 1);
+      var ms = unlock - now;
+      var s = Math.floor(ms / 1000);
+      var m = Math.floor(s / 60); s %= 60;
+      var h = Math.floor(m / 60); m %= 60;
+      nextUnlockEl.textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
+
+      // valentine's day: feb 14
+      var year = now.getFullYear();
+      var vday = new Date(year, 1, 14);
+      if (vday <= now) vday = new Date(year + 1, 1, 14);
+      var vms = vday - now;
+      var vd = Math.ceil(vms / (1000 * 60 * 60 * 24));
+      vdayEl.textContent = vd + ' days';
+    }
+
+    updateCountdowns();
+    setInterval(updateCountdowns, 1000);
+
+    // ---- PETALS (gentle, not too many) ----
+    function createPetal() {
+      var petal = document.createElement('div');
+      petal.className = 'petal';
+      var size = Math.random() * 8 + 5;
+      var left = Math.random() * 100;
+      var dur = Math.random() * 10 + 12;
+      var delay = Math.random() * 4;
+      var hue = Math.random() > .5 ? '#e8bcb4' : '#ddb8b0';
+      petal.style.cssText = 'left:' + left + '%;width:' + size + 'px;height:' + size + 'px;background:' + hue + ';border-radius:50% 0 50% 50%;animation-duration:' + dur + 's;animation-delay:' + delay + 's;';
+      document.body.appendChild(petal);
+      setTimeout(function() { petal.remove(); }, (dur + delay) * 1000);
+    }
+    setInterval(createPetal, 4500);
+    for (var j = 0; j < 3; j++) setTimeout(createPetal, j * 1200);
+  </script>
+</body>
+</html>
