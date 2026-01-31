@@ -350,6 +350,47 @@
       letter-spacing: 0.5px;
     }
 
+    /* day switcher */
+    .day-switcher {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 99;
+      display: flex;
+      gap: 0;
+      background: rgba(28,21,24,0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 3px;
+      user-select: none;
+    }
+    .day-tab {
+      font-family: 'Lora', serif;
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      padding: 5px 14px;
+      border-radius: 17px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: rgba(240,230,226,0.5);
+      background: transparent;
+    }
+    .day-tab.active {
+      color: #fdf6f0;
+      background: rgba(196,144,138,0.35);
+    }
+    .day-tab:hover:not(.active) {
+      color: rgba(240,230,226,0.8);
+    }
+    .day-tab.locked {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
     /* grain */
     body::after {
       content: '';
@@ -383,6 +424,9 @@
     <span class="swan-label">For Soraya</span>
   </div>
 
+  <!-- day switcher -->
+  <div class="day-switcher" id="daySwitcher"></div>
+
   <div id="slides"></div>
 
   <!-- music player -->
@@ -396,126 +440,245 @@
   </div>
 
   <script>
-    var reasons = [
-      "Loving you feels instinctive, like something my heart already knew.",
-      "I appreciate you in ways that happen effortlessly.",
-      "Every version of forever includes you.",
-      "Even the quietest things you say linger with <b>me</b>.",
-      "You make me feel genuinely safe.",
-      "With you, excitement feels steady, never overwhelming.",
-      "You understand me without needing explanations.",
-      "Being with you feels familiar in the most comforting way.",
-      "You bring peace to parts of me that were always restless.",
-      "You steady me when doubt creeps in.",
-      "My love for you doesn\u2019t waver.",
-      "My love for you isn\u2019t conditional.",
-      "My love for you isn\u2019t temporary.",
-      "You ground me when my mind is overloaded.",
-      "Time softens and slows when I\u2019m with <b>you</b>.",
-      "You show up when it actually matters.",
-      "You add depth to life.",
-      "You make me want to be better, not different.",
-      "With you, I feel capable.",
-      "With you, I feel confident in what\u2019s ahead.",
-      "I believe in what we can build together.",
-      "My focus is on you, consistently.",
-      "You are the only exception.",
-      "I think about our future in ways that feel real, not imagined.",
-      "The life we speak of feels within a finger\u2019s reach.",
-      "We care about the same things at our core.",
-      "Our priorities align where it counts most.",
-      "What we\u2019ve already built feels intentional and meaningful.",
-      "I\u2019m excited to see how it continues to unfold.",
-      "We\u2019re learning what love looks like, together.",
-      "You understand how my mind works.",
-      "You understand why I am the way I am.",
-      "You make me laugh in ways no one else ever has.",
-      "Distance feels temporary because I know we\u2019re building toward forever.",
-      "You taught me that patience is just love in slow motion.",
-      "You share your world with me.",
-      "You let me into the parts of life that matter most.",
-      "You bring clarity where there was noise.",
-      "We align without forcing it.",
-      "We move in sync naturally.",
-      "With you, even longing feels like belonging.",
-      "What we have doesn\u2019t happen twice.",
-      "Silence with you still feels full.",
-      "As deep as this feels, I know we\u2019re only at the beginning."
+    // ---- DAY CONFIGS ----
+    var days = [
+      {
+        day: 1,
+        unlock: null,
+        title: '44 Reasons<br>I Love You',
+        subtitle: 'Because some things deserve to be said slowly.',
+        song: 'song.mp3',
+        songName: 'lvr boy',
+        welcome: '<span class="welcome-name">Soraya,</span>' +
+          'I wrote you in 444 parts. Every morning at 4:44, another piece of my heart reveals itself. ' +
+          'Fifteen days of truths about loving you, about what sets you apart, and about the life I want us to live. ' +
+          'This is my heart, measured in moments that led me to you.' +
+          '<br><br>So here\u2019s Day 1 \u2014 44 reasons I love you.',
+        reasons: [
+          "Loving you feels instinctive, like something my heart already knew.",
+          "I appreciate you in ways that happen effortlessly.",
+          "Every version of forever includes you.",
+          "Even the quietest things you say linger with <b>me</b>.",
+          "You make me feel genuinely safe.",
+          "With you, excitement feels steady, never overwhelming.",
+          "You understand me without needing explanations.",
+          "Being with you feels familiar in the most comforting way.",
+          "You bring peace to parts of me that were always restless.",
+          "You steady me when doubt creeps in.",
+          "My love for you doesn\u2019t waver.",
+          "My love for you isn\u2019t conditional.",
+          "My love for you isn\u2019t temporary.",
+          "You ground me when my mind is overloaded.",
+          "Time softens and slows when I\u2019m with <b>you</b>.",
+          "You show up when it actually matters.",
+          "You add depth to life.",
+          "You make me want to be better, not different.",
+          "With you, I feel capable.",
+          "With you, I feel confident in what\u2019s ahead.",
+          "I believe in what we can build together.",
+          "My focus is on you, consistently.",
+          "You are the only exception.",
+          "I think about our future in ways that feel real, not imagined.",
+          "The life we speak of feels within a finger\u2019s reach.",
+          "We care about the same things at our core.",
+          "Our priorities align where it counts most.",
+          "What we\u2019ve already built feels intentional and meaningful.",
+          "I\u2019m excited to see how it continues to unfold.",
+          "We\u2019re learning what love looks like, together.",
+          "You understand how my mind works.",
+          "You understand why I am the way I am.",
+          "You make me laugh in ways no one else ever has.",
+          "Distance feels temporary because I know we\u2019re building toward forever.",
+          "You taught me that patience is just love in slow motion.",
+          "You share your world with me.",
+          "You let me into the parts of life that matter most.",
+          "You bring clarity where there was noise.",
+          "We align without forcing it.",
+          "We move in sync naturally.",
+          "With you, even longing feels like belonging.",
+          "What we have doesn\u2019t happen twice.",
+          "Silence with you still feels full.",
+          "As deep as this feels, I know we\u2019re only at the beginning."
+        ]
+      },
+      {
+        day: 2,
+        unlock: new Date('2026-01-31T09:44:00Z'), // 4:44 AM EST
+        title: '33 Reasons<br>Why You\u2019re Different',
+        subtitle: 'Because what makes you different makes you irreplaceable.',
+        song: 'song2.mp3',
+        songName: 'Yaani Ahebak',
+        welcome: null,
+        reasons: [
+          "You broke patterns I didn\u2019t know I was repeating.",
+          "You hold onto pieces of me I didn\u2019t realize I shared.",
+          "You see me clearly without judgment.",
+          "You understand me without making me feel exposed.",
+          "You challenge my perspective without making me feel wrong.",
+          "Your way of showing love feels intentional, never performative.",
+          "Your love doesn\u2019t come with conditions or expectations.",
+          "Your presence changes the atmosphere.",
+          "You\u2019re as smart as you are beautiful.",
+          "You occupy a space nothing else could fill.",
+          "You handle difficult situations with grace.",
+          "You know what to say and when silence is better.",
+          "You know how to say things in a way that truly lands.",
+          "You listen to understand, not to respond.",
+          "You take accountability without becoming defensive.",
+          "You own your mistakes with maturity.",
+          "You make commitment feel freeing, not limiting.",
+          "You bring out parts of me I didn\u2019t know were waiting.",
+          "You help me grow without trying to change who I am.",
+          "You make forever feel less like a promise and more like a plan.",
+          "You\u2019re confident without needing to prove it.",
+          "You care deeply without losing yourself.",
+          "You balance strength and softness naturally.",
+          "You make vulnerability feel like strength, not weakness.",
+          "You pause before reacting.",
+          "You approach problems with solutions, not complaints.",
+          "You don\u2019t play games or seek validation.",
+          "You\u2019re authentic in ways everyone has forgotten how to be.",
+          "You love the parts of me I\u2019m still learning to accept.",
+          "You make love feel simple, not complicated.",
+          "Your consistency makes trust feel easy.",
+          "You make me feel chosen, never questioned.",
+          "You feel real in a world that often isn\u2019t."
+        ]
+      }
     ];
 
-    // ---- BUILD SLIDES ----
-    var container = document.getElementById('slides');
+    // ---- DETERMINE UNLOCKED DAYS ----
+    var now = new Date();
+    var unlockedDays = [];
+    for (var d = 0; d < days.length; d++) {
+      if (!days[d].unlock || now >= days[d].unlock) unlockedDays.push(d);
+    }
+    // default to latest unlocked day
+    var currentDay = unlockedDays[unlockedDays.length - 1];
 
-    // hero
-    var hero = document.createElement('div');
-    hero.className = 'slide';
-    hero.innerHTML =
-      '<p class="day-label">Day 1</p>' +
-      '<p class="angel-number">444</p>' +
-      '<h1 class="hero-title">44 Reasons<br>I Love You</h1>' +
-      '<p class="hero-subtitle"><em>Because some things deserve to be said slowly.</em></p>' +
-      '<div class="countdowns">' +
-        '<div class="countdown-item">Next unlock in <span class="countdown-time" id="nextUnlock">--:--:--</span></div>' +
-        '<div class="countdown-item">Valentine\u2019s Day in <span class="countdown-time" id="vdayCountdown">-- days</span></div>' +
-      '</div>' +
-      '<div class="scroll-hint">' +
-        '<span>scroll</span>' +
-        '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-          '<path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/>' +
-        '</svg>' +
-      '</div>';
-    container.appendChild(hero);
-
-    // welcome message
-    var welcome = document.createElement('div');
-    welcome.className = 'slide';
-    welcome.innerHTML =
-      '<p class="welcome-text">' +
-        '<span class="welcome-name">Soraya,</span>' +
-        'I wrote you in 444 parts. Every morning at 4:44, another piece of my heart reveals itself. ' +
-        'Fifteen days of truths about loving you, about what sets you apart, and about the life I want us to live. ' +
-        'This is my heart, measured in moments that led me to you.' +
-        '<br><br>So here\u2019s Day 1 \u2014 44 reasons I love you.' +
-      '</p>';
-    container.appendChild(welcome);
-
-    // reasons 1-43
-    for (var i = 0; i < reasons.length - 1; i++) {
-      var el = document.createElement('div');
-      el.className = 'slide';
-      el.innerHTML =
-        '<div class="reason-number">' + (i + 1) + '</div>' +
-        '<p class="reason-text">' + reasons[i] + '</p>';
-      container.appendChild(el);
+    // ---- BUILD SWITCHER ----
+    var switcher = document.getElementById('daySwitcher');
+    function buildSwitcher() {
+      switcher.innerHTML = '';
+      for (var d = 0; d < days.length; d++) {
+        var btn = document.createElement('button');
+        btn.className = 'day-tab';
+        btn.textContent = 'Day ' + days[d].day;
+        var unlocked = !days[d].unlock || now >= days[d].unlock;
+        if (!unlocked) btn.classList.add('locked');
+        if (d === currentDay) btn.classList.add('active');
+        btn.setAttribute('data-day', d);
+        if (unlocked) {
+          btn.addEventListener('click', (function(idx) {
+            return function() { loadDay(idx); };
+          })(d));
+        }
+        switcher.appendChild(btn);
+      }
+      // hide switcher if only 1 day unlocked
+      switcher.style.display = unlockedDays.length > 1 ? 'flex' : 'none';
     }
 
-    // closing (44)
-    var closingSlide = document.createElement('div');
-    closingSlide.className = 'slide';
-    closingSlide.innerHTML =
-      '<div class="closing-heart">🤍</div>' +
-      '<div class="closing-number">44</div>' +
-      '<p class="closing-text">' + reasons[reasons.length - 1] + '</p>';
-    container.appendChild(closingSlide);
+    // ---- BUILD SLIDES FOR A DAY ----
+    var container = document.getElementById('slides');
+    var music = document.getElementById('bgMusic');
+    var playerTitle = document.querySelector('.player-title');
 
-    // comeback
-    var comeback = document.createElement('div');
-    comeback.className = 'slide';
-    comeback.innerHTML =
-      '<p class="welcome-text" style="font-style:normal;font-size:clamp(1.1rem,2.8vw,1.35rem);color:#b07a74;">Come back tomorrow, there\u2019s more waiting for <b>you</b>.</p>';
-    container.appendChild(comeback);
+    function loadDay(idx) {
+      currentDay = idx;
+      var day = days[idx];
+      container.innerHTML = '';
+      window.scrollTo(0, 0);
+
+      // hero
+      var hero = document.createElement('div');
+      hero.className = 'slide';
+      hero.innerHTML =
+        '<p class="day-label">Day ' + day.day + '</p>' +
+        '<p class="angel-number">444</p>' +
+        '<h1 class="hero-title">' + day.title + '</h1>' +
+        '<p class="hero-subtitle"><em>' + day.subtitle + '</em></p>' +
+        '<div class="countdowns">' +
+          '<div class="countdown-item">Next unlock in <span class="countdown-time" id="nextUnlock">--:--:--</span></div>' +
+          '<div class="countdown-item">Valentine\u2019s Day in <span class="countdown-time" id="vdayCountdown">-- days</span></div>' +
+        '</div>' +
+        '<div class="scroll-hint">' +
+          '<span>scroll</span>' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+            '<path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/>' +
+          '</svg>' +
+        '</div>';
+      container.appendChild(hero);
+
+      // welcome (if exists for this day)
+      if (day.welcome) {
+        var welcome = document.createElement('div');
+        welcome.className = 'slide';
+        welcome.innerHTML = '<p class="welcome-text">' + day.welcome + '</p>';
+        container.appendChild(welcome);
+      }
+
+      // reasons 1 to N-1
+      var r = day.reasons;
+      for (var i = 0; i < r.length - 1; i++) {
+        var el = document.createElement('div');
+        el.className = 'slide';
+        el.innerHTML =
+          '<div class="reason-number">' + (i + 1) + '</div>' +
+          '<p class="reason-text">' + r[i] + '</p>';
+        container.appendChild(el);
+      }
+
+      // closing (last reason)
+      var closingSlide = document.createElement('div');
+      closingSlide.className = 'slide';
+      closingSlide.innerHTML =
+        '<div class="closing-heart">\uD83E\uDD0D</div>' +
+        '<div class="closing-number">' + r.length + '</div>' +
+        '<p class="closing-text">' + r[r.length - 1] + '</p>';
+      container.appendChild(closingSlide);
+
+      // comeback
+      var comeback = document.createElement('div');
+      comeback.className = 'slide';
+      comeback.innerHTML =
+        '<p class="welcome-text" style="font-style:normal;font-size:clamp(1.1rem,2.8vw,1.35rem);color:#b07a74;">Come back tomorrow, there\u2019s more waiting for <b>you</b>.</p>';
+      container.appendChild(comeback);
+
+      // switch music
+      var src = music.querySelector('source');
+      if (src.getAttribute('src') !== day.song) {
+        src.setAttribute('src', day.song);
+        music.load();
+        if (unmuted) {
+          music.muted = false;
+          music.play().catch(function(){});
+          isPlaying = true;
+        } else {
+          music.muted = true;
+          music.play().catch(function(){});
+        }
+      }
+      playerTitle.textContent = day.songName;
+
+      // update switcher active state
+      var tabs = switcher.querySelectorAll('.day-tab');
+      for (var t = 0; t < tabs.length; t++) {
+        tabs[t].classList.toggle('active', t === idx);
+      }
+
+      // re-bind countdowns
+      updateCountdowns();
+    }
 
     // ---- MUSIC ----
-    var music = document.getElementById('bgMusic');
     var isPlaying = false;
     var unmuted = false;
 
-    // start muted so autoplay works instantly (browsers allow muted autoplay)
     music.muted = true;
     music.volume = 1.0;
     music.play().catch(function(){});
 
-    // fade volume in quickly so it's not jarring
     function fadeIn() {
       music.volume = 0;
       music.muted = false;
@@ -530,7 +693,6 @@
       updatePlayBtn();
     }
 
-    // unmute on first real interaction — listen on EVERYTHING
     var activationEvents = ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup',
                             'pointermove', 'touchstart', 'touchend', 'keydown',
                             'mousemove', 'scroll', 'wheel', 'focus'];
@@ -550,7 +712,6 @@
       window.addEventListener(evt, unmuteMusic, true);
     });
 
-    // also catch page focus/visibility
     document.addEventListener('visibilitychange', function() {
       if (!unmuted && document.visibilityState === 'visible') unmuteMusic();
     });
@@ -568,8 +729,8 @@
 
     playBtn.addEventListener('click', function(e) {
       e.stopPropagation();
-      if (!musicStarted) {
-        playMusic();
+      if (!unmuted) {
+        unmuteMusic();
         return;
       }
       if (isPlaying) {
@@ -585,39 +746,39 @@
     // ---- SWAN KISS ----
     var swanImg = document.getElementById('swanImg');
     swanImg.addEventListener('click', function() {
-      // trigger kiss animation
       swanImg.classList.remove('kissing');
       void swanImg.offsetWidth;
       swanImg.classList.add('kissing');
-
-      // float a heart up
       var heart = document.createElement('span');
       heart.className = 'kiss-heart';
-      heart.innerHTML = '🤍';
+      heart.innerHTML = '\uD83E\uDD0D';
       swanImg.parentElement.appendChild(heart);
       setTimeout(function() { heart.remove(); }, 1200);
     });
 
     // ---- COUNTDOWNS ----
-    var nextUnlockEl = document.getElementById('nextUnlock');
-    var vdayEl = document.getElementById('vdayCountdown');
-
     function pad(n) { return n < 10 ? '0' + n : '' + n; }
 
     function updateCountdowns() {
+      var nextUnlockEl = document.getElementById('nextUnlock');
+      var vdayEl = document.getElementById('vdayCountdown');
+      if (!nextUnlockEl || !vdayEl) return;
+
       var now = new Date();
 
-      // next unlock: 4:44 AM tomorrow (or today if before 4:44)
-      var unlock = new Date(now);
+      // next unlock: 4:44 AM EST tomorrow (or today if before)
+      // EST = UTC-5, convert to local
+      var estNow = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+      var unlock = new Date(estNow);
       unlock.setHours(4, 44, 0, 0);
-      if (unlock <= now) unlock.setDate(unlock.getDate() + 1);
-      var ms = unlock - now;
+      if (unlock <= estNow) unlock.setDate(unlock.getDate() + 1);
+      var ms = unlock - estNow;
       var s = Math.floor(ms / 1000);
       var m = Math.floor(s / 60); s %= 60;
       var h = Math.floor(m / 60); m %= 60;
       nextUnlockEl.textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
 
-      // valentine's day: feb 14
+      // valentine's day
       var year = now.getFullYear();
       var vday = new Date(year, 1, 14);
       if (vday <= now) vday = new Date(year + 1, 1, 14);
@@ -626,10 +787,9 @@
       vdayEl.textContent = vd + ' days';
     }
 
-    updateCountdowns();
     setInterval(updateCountdowns, 1000);
 
-    // ---- PETALS (gentle, not too many) ----
+    // ---- PETALS ----
     function createPetal() {
       var petal = document.createElement('div');
       petal.className = 'petal';
@@ -644,6 +804,10 @@
     }
     setInterval(createPetal, 4500);
     for (var j = 0; j < 3; j++) setTimeout(createPetal, j * 1200);
+
+    // ---- INIT ----
+    buildSwitcher();
+    loadDay(currentDay);
   </script>
 </body>
 </html>
