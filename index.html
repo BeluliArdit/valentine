@@ -560,19 +560,17 @@
     var switcher = document.getElementById('daySwitcher');
     function buildSwitcher() {
       switcher.innerHTML = '';
-      for (var d = 0; d < days.length; d++) {
+      // only show unlocked days
+      for (var i = 0; i < unlockedDays.length; i++) {
+        var d = unlockedDays[i];
         var btn = document.createElement('button');
         btn.className = 'day-tab';
         btn.textContent = 'Day ' + days[d].day;
-        var unlocked = !days[d].unlock || now >= days[d].unlock;
-        if (!unlocked) btn.classList.add('locked');
         if (d === currentDay) btn.classList.add('active');
         btn.setAttribute('data-day', d);
-        if (unlocked) {
-          btn.addEventListener('click', (function(idx) {
-            return function() { loadDay(idx); };
-          })(d));
-        }
+        btn.addEventListener('click', (function(idx) {
+          return function() { loadDay(idx); };
+        })(d));
         switcher.appendChild(btn);
       }
       // hide switcher if only 1 day unlocked
