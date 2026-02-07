@@ -776,12 +776,9 @@
       var h = Math.floor(m / 60); m %= 60;
       nextUnlockEl.textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
 
-      // valentine's day - count calendar days
-      var year = now.getFullYear();
-      var today = new Date(year, now.getMonth(), now.getDate());
-      var vday = new Date(year, 1, 14);
-      if (vday <= today) vday = new Date(year + 1, 1, 14);
-      var vd = Math.round((vday - today) / (1000 * 60 * 60 * 24));
+      // valentine's day - simple calendar day count
+      var vd = 14 - now.getDate();
+      if (now.getMonth() !== 1 || vd <= 0) vd = '--';
       vdayEl.textContent = vd + ' days';
     }
 
