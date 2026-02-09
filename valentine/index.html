@@ -312,6 +312,21 @@
       text-shadow: 0 1px 10px rgba(107,58,58,0.08);
     }
 
+    /* day 4 image gallery */
+    .gallery-image {
+      max-width: 85vw;
+      max-height: 70vh;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(107,58,58,0.12);
+    }
+    @media (max-width: 600px) {
+      .gallery-image {
+        max-width: 92vw;
+        max-height: 65vh;
+      }
+    }
+
     /* music player */
     .music-player {
       position: fixed;
@@ -583,6 +598,46 @@
           "How you notice immediately when something's wrong with me.",
           "How you won't rest until you fix what's wrong when I'm upset."
         ]
+      },
+      {
+        day: 4,
+        unlock: new Date('2026-02-09T09:44:00Z'), // Feb 9 4:44 AM EST
+        title: 'Pictures That<br>Remind Me of You',
+        subtitle: '28 moments captured in images.',
+        song: 'song4.mp3',
+        songName: "I'll Stand by You",
+        welcome: null,
+        isGallery: true,
+        images: [
+          'pictures/image_2026-01-30_22-03-25.png',
+          'pictures/image_2026-01-31_22-49-58.png',
+          'pictures/image_2026-01-31_21-42-13.png',
+          'pictures/image_2026-02-08_10-18-04.png',
+          'pictures/image_2026-02-08_09-51-00.png',
+          'pictures/image_2026-02-08_10-24-46.png',
+          'pictures/image_2026-02-08_10-24-27.png',
+          'pictures/image_2026-01-31_21-56-17.png',
+          'pictures/image_2026-02-08_09-53-44.png',
+          'pictures/image_2026-01-30_21-46-24.png',
+          'pictures/photo_2026-01-31_22-20-03.jpg',
+          'pictures/image_2026-01-31_21-37-25.png',
+          'pictures/image_2026-01-30_21-58-27.png',
+          'pictures/image_2026-01-31_22-18-02.png',
+          'pictures/image_2026-01-31_21-53-53.png',
+          'pictures/image_2026-01-31_21-38-20.png',
+          'pictures/image_2026-01-30_21-56-52.png',
+          'pictures/image_2026-01-31_21-41-25.png',
+          'pictures/image_2026-01-31_21-57-55.png',
+          'pictures/image_2026-01-31_22-52-58.png',
+          'pictures/image_2026-01-31_22-51-40.png',
+          'pictures/image_2026-01-31_22-34-52.png',
+          'pictures/image_2026-01-31_21-44-23.png',
+          'pictures/image_2026-01-30_22-05-52.png',
+          'pictures/image_2026-01-31_22-19-53.png',
+          'pictures/image_2026-01-30_21-49-19.png',
+          'pictures/image_2026-01-30_22-00-38.png',
+          'pictures/image_2026-01-30_21-55-20.png'
+        ]
       }
     ];
 
@@ -655,25 +710,36 @@
         container.appendChild(welcome);
       }
 
-      // reasons 1 to N-1
-      var r = day.reasons;
-      for (var i = 0; i < r.length - 1; i++) {
-        var el = document.createElement('div');
-        el.className = 'slide';
-        el.innerHTML =
-          '<div class="reason-number">' + (i + 1) + '</div>' +
-          '<p class="reason-text">' + r[i] + '</p>';
-        container.appendChild(el);
-      }
+      // check if this is a gallery day (images only)
+      if (day.isGallery && day.images) {
+        // image gallery slides
+        for (var i = 0; i < day.images.length; i++) {
+          var el = document.createElement('div');
+          el.className = 'slide';
+          el.innerHTML = '<img class="gallery-image" src="' + day.images[i] + '" alt="">';
+          container.appendChild(el);
+        }
+      } else {
+        // reasons 1 to N-1
+        var r = day.reasons;
+        for (var i = 0; i < r.length - 1; i++) {
+          var el = document.createElement('div');
+          el.className = 'slide';
+          el.innerHTML =
+            '<div class="reason-number">' + (i + 1) + '</div>' +
+            '<p class="reason-text">' + r[i] + '</p>';
+          container.appendChild(el);
+        }
 
-      // closing (last reason)
-      var closingSlide = document.createElement('div');
-      closingSlide.className = 'slide';
-      closingSlide.innerHTML =
-        '<div class="closing-heart">\uD83E\uDD0D</div>' +
-        '<div class="closing-number">' + r.length + '</div>' +
-        '<p class="closing-text">' + r[r.length - 1] + '</p>';
-      container.appendChild(closingSlide);
+        // closing (last reason)
+        var closingSlide = document.createElement('div');
+        closingSlide.className = 'slide';
+        closingSlide.innerHTML =
+          '<div class="closing-heart">\uD83E\uDD0D</div>' +
+          '<div class="closing-number">' + r.length + '</div>' +
+          '<p class="closing-text">' + r[r.length - 1] + '</p>';
+        container.appendChild(closingSlide);
+      }
 
       // comeback
       var comeback = document.createElement('div');
