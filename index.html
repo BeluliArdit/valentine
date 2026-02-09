@@ -719,6 +719,13 @@
           el.innerHTML = '<img class="gallery-image" src="' + day.images[i] + '" alt="">';
           container.appendChild(el);
         }
+        // closing message for gallery
+        var closingSlide = document.createElement('div');
+        closingSlide.className = 'slide';
+        closingSlide.innerHTML =
+          '<div class="closing-heart">\uD83E\uDD0D</div>' +
+          '<p class="closing-text">I love you</p>';
+        container.appendChild(closingSlide);
       } else {
         // reasons 1 to N-1
         var r = day.reasons;
