@@ -647,6 +647,7 @@
         song: 'song5.mp3',
         songName: 'Wake Up \u2013 EDEN',
         welcome: null,
+        lastMessage: 'I love you',
         reasons: [
           "I didn\u2019t believe in love at all until you.",
           "I thought what I\u2019d experienced before was love \u2013 meeting you showed me it never was.",
@@ -782,8 +783,14 @@
       // comeback
       var comeback = document.createElement('div');
       comeback.className = 'slide';
-      comeback.innerHTML =
-        '<p class="welcome-text" style="font-style:normal;font-size:clamp(1.1rem,2.8vw,1.35rem);color:#b07a74;">Come back tomorrow, there\u2019s more waiting for <b>you</b>.</p>';
+      if (day.lastMessage) {
+        comeback.innerHTML =
+          '<div class="closing-heart">\uD83E\uDD0D</div>' +
+          '<p class="closing-text">' + day.lastMessage + '</p>';
+      } else {
+        comeback.innerHTML =
+          '<p class="welcome-text" style="font-style:normal;font-size:clamp(1.1rem,2.8vw,1.35rem);color:#b07a74;">Come back tomorrow, there\u2019s more waiting for <b>you</b>.</p>';
+      }
       container.appendChild(comeback);
 
       // switch music
