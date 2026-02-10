@@ -787,6 +787,23 @@
           'It\u2019s all yours.',
           'Reach out to me for access.'
         ]
+      },
+      {
+        day: 8,
+        unlock: new Date('2026-02-13T09:44:00Z'), // Feb 13 4:44 AM EST
+        title: 'Before Tomorrow',
+        subtitle: '',
+        song: 'song8.mp3',
+        songName: 'Song 8',
+        welcome: null,
+        hideNumbers: true,
+        lastMessage: 'I love you',
+        reasons: [
+          "Tomorrow is Valentine\u2019s Day.",
+          "But I don\u2019t need a holiday to tell you what you already know \u2013 you\u2019re everything to me.",
+          "Eight days. Eight pieces of my heart laid out for you to see. And tomorrow is the last one.",
+          "I just need you to know that everything I\u2019ve shown you this week is only a fraction of what I feel. Some things are too big for a screen."
+        ]
       }
     ];
 
@@ -926,7 +943,7 @@
           var el = document.createElement('div');
           el.className = 'slide';
           el.innerHTML =
-            '<div class="reason-number">' + (i + 1) + '</div>' +
+            (day.hideNumbers ? '' : '<div class="reason-number">' + (i + 1) + '</div>') +
             '<p class="reason-text">' + r[i] + '</p>';
           container.appendChild(el);
         }
@@ -936,7 +953,7 @@
         closingSlide.className = 'slide';
         closingSlide.innerHTML =
           '<div class="closing-heart">\uD83E\uDD0D</div>' +
-          '<div class="closing-number">' + r.length + '</div>' +
+          (day.hideNumbers ? '' : '<div class="closing-number">' + r.length + '</div>') +
           '<p class="closing-text">' + r[r.length - 1] + '</p>';
         container.appendChild(closingSlide);
       }
