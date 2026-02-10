@@ -406,6 +406,81 @@
       cursor: not-allowed;
     }
 
+    /* vault theme (Day 7) */
+    body.vault-theme { background-color: #1a0a0e; transition: background-color 0.8s ease; }
+    body.vault-theme .bg-photo { opacity: 0.02; }
+    body.vault-theme .page-border { border-color: rgba(228,180,172,0.06); }
+    body.vault-theme .day-label { color: #e8a9a0; }
+    body.vault-theme .angel-number { color: #c4908a; }
+    body.vault-theme .hero-title { color: #f0d0ca; }
+    body.vault-theme .hero-subtitle { color: #d4a8a0; }
+    body.vault-theme .countdowns { border-color: rgba(228,180,172,0.12); background: rgba(40,18,24,0.6); }
+    body.vault-theme .countdown-item { color: #d4a8a0; }
+    body.vault-theme .countdown-time { color: #f0d0ca; }
+    body.vault-theme .scroll-hint { color: #c4908a; }
+    body.vault-theme .scroll-hint svg { stroke: #c4908a; }
+    body.vault-theme .swan-label { color: #d4908a; }
+
+    /* vault slide */
+    .vault-lock-svg {
+      width: 56px;
+      height: 56px;
+      opacity: 0;
+      margin-bottom: 2rem;
+      animation: vaultLockIn 1.2s ease forwards;
+    }
+    .vault-lock-svg .shackle {
+      transform-origin: 17px 11px;
+      transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .vault-lock-svg.unlocked .shackle {
+      transform: translateY(-3px) rotate(-30deg);
+    }
+    @keyframes vaultLockIn {
+      0% { opacity: 0; transform: scale(0.7); }
+      100% { opacity: 0.9; transform: scale(1); }
+    }
+    .vault-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      font-style: italic;
+      font-size: clamp(1.1rem, 2.6vw, 1.4rem);
+      color: #e8c4be;
+      max-width: 480px;
+      line-height: 2.2;
+      text-align: center;
+      min-height: 160px;
+    }
+    .vault-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.15em;
+      background: #c4908a;
+      animation: vaultBlink 1s step-end infinite;
+      margin-left: 1px;
+      vertical-align: text-bottom;
+    }
+    @keyframes vaultBlink { 50% { opacity: 0; } }
+
+    /* tab lock icon */
+    .tab-lock {
+      display: inline-block;
+      margin-left: 2px;
+      font-size: 0.55rem;
+      vertical-align: middle;
+    }
+    .tab-lock.unlocking {
+      animation: lockShake 0.8s ease;
+    }
+    @keyframes lockShake {
+      0% { transform: rotate(0); }
+      20% { transform: rotate(-15deg); }
+      40% { transform: rotate(12deg); }
+      60% { transform: rotate(-8deg); }
+      80% { transform: rotate(4deg); }
+      100% { transform: rotate(0); }
+    }
+
     /* grain */
     body::after {
       content: '';
@@ -692,6 +767,26 @@
           "I promise I will love you and treasure you unconditionally no matter how bad the circumstances are.",
           "I promise I will love you in this life and the hereafter."
         ]
+      },
+      {
+        day: 7,
+        unlock: new Date('2026-02-12T09:44:00Z'), // Feb 12 4:44 AM EST
+        title: 'I Saved Everything',
+        subtitle: '',
+        song: 'song7.mp3',
+        songName: 'Song 7',
+        welcome: null,
+        isVault: true,
+        vaultLines: [
+          'I saved everything.',
+          '',
+          'Every message that made me smile.',
+          'Every voice note I replayed.',
+          'Every moment I wanted to keep forever.',
+          '',
+          'It\u2019s all yours.',
+          'Reach out to me for access.'
+        ]
       }
     ];
 
@@ -713,7 +808,11 @@
         var d = unlockedDays[i];
         var btn = document.createElement('button');
         btn.className = 'day-tab';
-        btn.textContent = 'Day ' + days[d].day;
+        if (days[d].isVault) {
+          btn.innerHTML = 'Day ' + days[d].day + ' <span class="tab-lock">\uD83D\uDD12</span>';
+        } else {
+          btn.textContent = 'Day ' + days[d].day;
+        }
         if (d === currentDay) btn.classList.add('active');
         btn.setAttribute('data-day', d);
         btn.addEventListener('click', (function(idx) {
@@ -729,12 +828,21 @@
     var container = document.getElementById('slides');
     var music = document.getElementById('bgMusic');
     var playerTitle = document.querySelector('.player-title');
+    var vaultObserver = null;
 
     function loadDay(idx) {
+      if (vaultObserver) { vaultObserver.disconnect(); vaultObserver = null; }
       currentDay = idx;
       var day = days[idx];
       container.innerHTML = '';
       window.scrollTo(0, 0);
+
+      // toggle vault theme
+      if (day.isVault) {
+        document.body.classList.add('vault-theme');
+      } else {
+        document.body.classList.remove('vault-theme');
+      }
 
       // hero
       var hero = document.createElement('div');
@@ -743,7 +851,7 @@
         '<p class="day-label">Day ' + day.day + '</p>' +
         '<p class="angel-number">444</p>' +
         '<h1 class="hero-title">' + day.title + '</h1>' +
-        '<p class="hero-subtitle"><em>' + day.subtitle + '</em></p>' +
+        (day.subtitle ? '<p class="hero-subtitle"><em>' + day.subtitle + '</em></p>' : '') +
         '<div class="countdowns">' +
           '<div class="countdown-item">Next unlock in <span class="countdown-time" id="nextUnlock">--:--:--</span></div>' +
           '<div class="countdown-item">Valentine\u2019s Day in <span class="countdown-time" id="vdayCountdown">-- days</span></div>' +
@@ -764,8 +872,39 @@
         container.appendChild(welcome);
       }
 
+      // check if this is a vault day (typewriter reveal)
+      if (day.isVault && day.vaultLines) {
+        var vaultSlide = document.createElement('div');
+        vaultSlide.className = 'slide';
+        vaultSlide.innerHTML =
+          '<svg class="vault-lock-svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
+            '<rect x="3" y="11" width="18" height="11" rx="2" stroke="#c4908a"/>' +
+            '<path class="shackle" d="M7 11V7a5 5 0 0 1 10 0v4" stroke="#c4908a"/>' +
+          '</svg>' +
+          '<div class="vault-text" id="vaultText"></div>';
+        container.appendChild(vaultSlide);
+        (function(vLines) {
+          vaultObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+              if (entry.isIntersecting) {
+                vaultObserver.disconnect();
+                vaultObserver = null;
+                setTimeout(function() {
+                  var lockSvg = document.querySelector('.vault-lock-svg');
+                  if (lockSvg) lockSvg.classList.add('unlocked');
+                  setTimeout(function() {
+                    var vtEl = document.getElementById('vaultText');
+                    if (vtEl) typewriterVault(vtEl, vLines);
+                  }, 800);
+                }, 1200);
+              }
+            });
+          }, { threshold: 0.3 });
+          vaultObserver.observe(vaultSlide);
+        })(day.vaultLines);
+
       // check if this is a gallery day (images only)
-      if (day.isGallery && day.images) {
+      } else if (day.isGallery && day.images) {
         // image gallery slides
         for (var i = 0; i < day.images.length; i++) {
           var el = document.createElement('div');
@@ -802,18 +941,20 @@
         container.appendChild(closingSlide);
       }
 
-      // comeback
-      var comeback = document.createElement('div');
-      comeback.className = 'slide';
-      if (day.lastMessage) {
-        comeback.innerHTML =
-          '<div class="closing-heart">\uD83E\uDD0D</div>' +
-          '<p class="closing-text">' + day.lastMessage + '</p>';
-      } else {
-        comeback.innerHTML =
-          '<p class="welcome-text" style="font-style:normal;font-size:clamp(1.1rem,2.8vw,1.35rem);color:#b07a74;">Come back tomorrow, there\u2019s more waiting for <b>you</b>.</p>';
+      // comeback (skip for vault days)
+      if (!day.isVault) {
+        var comeback = document.createElement('div');
+        comeback.className = 'slide';
+        if (day.lastMessage) {
+          comeback.innerHTML =
+            '<div class="closing-heart">\uD83E\uDD0D</div>' +
+            '<p class="closing-text">' + day.lastMessage + '</p>';
+        } else {
+          comeback.innerHTML =
+            '<p class="welcome-text" style="font-style:normal;font-size:clamp(1.1rem,2.8vw,1.35rem);color:#b07a74;">Come back tomorrow, there\u2019s more waiting for <b>you</b>.</p>';
+        }
+        container.appendChild(comeback);
       }
-      container.appendChild(comeback);
 
       // switch music
       var src = music.querySelector('source');
@@ -835,6 +976,20 @@
       var tabs = switcher.querySelectorAll('.day-tab');
       for (var t = 0; t < tabs.length; t++) {
         tabs[t].classList.toggle('active', t === idx);
+      }
+
+      // animate tab lock icons
+      var tabLocks = switcher.querySelectorAll('.tab-lock');
+      for (var l = 0; l < tabLocks.length; l++) {
+        tabLocks[l].textContent = '\uD83D\uDD12';
+        tabLocks[l].classList.remove('unlocking');
+      }
+      if (day.isVault) {
+        var activeLock = switcher.querySelector('.day-tab.active .tab-lock');
+        if (activeLock) {
+          activeLock.classList.add('unlocking');
+          setTimeout(function() { activeLock.textContent = '\uD83D\uDD13'; }, 400);
+        }
       }
 
       // re-bind countdowns
@@ -971,6 +1126,36 @@
     }
     setInterval(createPetal, 4500);
     for (var j = 0; j < 3; j++) setTimeout(createPetal, j * 1200);
+
+    // ---- TYPEWRITER ----
+    function typewriterVault(el, lines) {
+      var cursor = document.createElement('span');
+      cursor.className = 'vault-cursor';
+      el.appendChild(cursor);
+      var lineIdx = 0;
+      var charIdx = 0;
+      function type() {
+        if (lineIdx >= lines.length) return;
+        if (lines[lineIdx] === '') {
+          el.insertBefore(document.createElement('br'), cursor);
+          el.insertBefore(document.createElement('br'), cursor);
+          lineIdx++;
+          setTimeout(type, 600);
+          return;
+        }
+        if (charIdx < lines[lineIdx].length) {
+          el.insertBefore(document.createTextNode(lines[lineIdx][charIdx]), cursor);
+          charIdx++;
+          setTimeout(type, 55);
+        } else {
+          el.insertBefore(document.createElement('br'), cursor);
+          lineIdx++;
+          charIdx = 0;
+          setTimeout(type, 400);
+        }
+      }
+      type();
+    }
 
     // ---- INIT ----
     buildSwitcher();
