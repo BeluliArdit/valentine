@@ -420,6 +420,11 @@
     body.vault-theme .scroll-hint { color: #c4908a; }
     body.vault-theme .scroll-hint svg { stroke: #c4908a; }
     body.vault-theme .swan-label { color: #d4908a; }
+    body.vault-theme .reason-number { color: #e8c4be; }
+    body.vault-theme .reason-text { color: #e8c4be; }
+    body.vault-theme .closing-text { color: #f0d0ca; }
+    body.vault-theme .closing-heart { color: #e8a9a0; }
+    body.vault-theme .welcome-text { color: #d4a8a0; }
 
     /* vault slide */
     .vault-lock-svg {
@@ -754,6 +759,7 @@
         song: 'song6.mp3',
         songName: 'First Day of My Life \u2013 Bright Eyes',
         welcome: null,
+        darkTheme: true,
         lastMessage: 'P.S. You will forevermore own my heart.',
         reasons: [
           "I promise to perpetually love you through all that we are facing and will face.",
@@ -855,7 +861,7 @@
       window.scrollTo(0, 0);
 
       // toggle vault theme
-      if (day.isVault) {
+      if (day.isVault || day.darkTheme) {
         document.body.classList.add('vault-theme');
       } else {
         document.body.classList.remove('vault-theme');
